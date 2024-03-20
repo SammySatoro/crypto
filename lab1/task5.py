@@ -16,28 +16,33 @@ def mod_inverse(a, m):
         return x % m
 
 def solve_linear_congruence(a, b, m):
-    gcd = math.gcd(a, m)
+    gcd, x, y = gcd_extended(a, m)
     if b % gcd != 0:
         raise Exception("No solutions")
     else:
-        a = a // gcd
-        b = b // gcd
-        m = m // gcd
-        inverse = mod_inverse(a, m)
-        solution = (inverse * b) % m
-        return solution
+        # Одно решение
+        if gcd == 1:
+            a_reduced = a // gcd
+            b_reduced = b // gcd
+            m_reduced = m // gcd
+            inverse_reduced = mod_inverse(a_reduced, m_reduced)
+            single_solution = (inverse_reduced * b_reduced) % m_reduced
+            return [single_solution]
+        else:
+            # Несколько решений
+            a_reduced = a // gcd
+            b_reduced = b // gcd
+            m_reduced = m // gcd
+            inverse_reduced = mod_inverse(a_reduced, m_reduced)
+            single_solution = (inverse_reduced * b_reduced) % m_reduced
+            solutions = [(single_solution + i * m_reduced) % m for i in range(gcd)]
+            return solutions
 
 # Сравнение: 3x ≡ 19 (mod 34)
 a = 3
 b = 19
 m = 34
 
-# Решение сравнения первым способом
-x_inv = mod_inverse(a, m)
-solution_1 = (x_inv * b) % m
+solution_1 = solve_linear_congruence(a, b, m)
 
-# Решение сравнения вторым способом
-solution_2 = solve_linear_congruence(a, b, m)
-
-print("Первый способ:", solution_1)
-print("Второй способ:", solution_2)
+print("Решение:", solution_1)
